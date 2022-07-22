@@ -1,5 +1,8 @@
 package armazem;
 
+import exception.IngredienteJaCadastrado;
+import exception.IngredienteNaoEncontrado;
+import exception.QuantidadeInvalida;
 import ingredientes.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,14 +16,14 @@ class ArmazemTest {
     Armazem armazem;
 
     @BeforeEach
-    void setup(){
+    void setup() throws IngredienteJaCadastrado {
         armazem = new Armazem();
         Ingrediente iogurte = new Base(TipoBase.IORGUTE);
         armazem.cadastrarIngrediente(iogurte, 2);
     }
 
     @Test
-    void cadastrarIngredienteEmEstoque_properly(){
+    void cadastrarIngredienteEmEstoque_properly() throws IngredienteJaCadastrado {
         Ingrediente mel = new Topping(TipoTopping.MEL);
         armazem.cadastrarIngrediente(mel, 2);
 
@@ -32,7 +35,7 @@ class ArmazemTest {
         Ingrediente iogurte = new Base(TipoBase.IORGUTE);
 
         Exception thrown = assertThrows(
-                IllegalArgumentException.class,
+                IngredienteJaCadastrado.class,
                 () -> armazem.cadastrarIngrediente(iogurte, 0),
                 "Excecao nao encontrada"
         );
@@ -41,7 +44,7 @@ class ArmazemTest {
     }
 
     @Test
-    void testDescadastrarIngredienteEmEstoque_property(){
+    void testDescadastrarIngredienteEmEstoque_property() throws IngredienteNaoEncontrado {
         Ingrediente iogurte = new Base(TipoBase.IORGUTE);
 
         armazem.descadastrarIngrediente(iogurte);
@@ -54,7 +57,7 @@ class ArmazemTest {
         Ingrediente sorvete = new Base(TipoBase.SORVETE);
 
         Exception thrown = assertThrows(
-                IllegalArgumentException.class,
+                IngredienteNaoEncontrado.class,
                 () -> armazem.descadastrarIngrediente(sorvete),
                 "Excecao nao encontrada"
         );
@@ -63,7 +66,7 @@ class ArmazemTest {
     }
 
     @Test
-    void testAdicionarQuantidadeDoIngredienteEmEstoque_property(){
+    void testAdicionarQuantidadeDoIngredienteEmEstoque_property() throws QuantidadeInvalida, IngredienteNaoEncontrado {
         Ingrediente iogurte = new Base(TipoBase.IORGUTE);
 
         armazem.adicionarquantidadedoIngrediente(iogurte, 2);
@@ -76,13 +79,13 @@ class ArmazemTest {
         Ingrediente leite = new Base(TipoBase.LEITE);
 
         Exception thrown = assertThrows(
-                IllegalArgumentException.class,
+                IngredienteNaoEncontrado.class,
                 () -> armazem.adicionarquantidadedoIngrediente(leite, 2),
                 "Excecao nao encontrada"
         );
 
         Exception thrown2 = assertThrows(
-                IllegalArgumentException.class,
+                QuantidadeInvalida.class,
                 () -> armazem.adicionarquantidadedoIngrediente(leite, -9),
                 "Excecao nao encontrada"
         );
@@ -92,7 +95,7 @@ class ArmazemTest {
     }
 
     @Test
-    void testReduzirQuantidadeDoIngredienteEmEstoque_property(){
+    void testReduzirQuantidadeDoIngredienteEmEstoque_property() throws QuantidadeInvalida, IngredienteNaoEncontrado {
         Ingrediente iogurte = new Base(TipoBase.IORGUTE);
 
         armazem.reduzirQuantidadeDoIngrediente(iogurte, 1);
@@ -106,19 +109,19 @@ class ArmazemTest {
         Ingrediente iorgute = new Base(TipoBase.IORGUTE);
 
         Exception thrown = assertThrows(
-                IllegalArgumentException.class,
+                IngredienteNaoEncontrado.class,
                 () -> armazem.reduzirQuantidadeDoIngrediente(leite, 2),
                 "Excecao nao encontrada"
         );
 
         Exception thrown2 = assertThrows(
-                IllegalArgumentException.class,
+                QuantidadeInvalida.class,
                 () -> armazem.reduzirQuantidadeDoIngrediente(leite, -9),
                 "Excecao nao encontrada"
         );
 
         Exception thrown3 = assertThrows(
-                IllegalArgumentException.class,
+                QuantidadeInvalida.class,
                 () -> armazem.reduzirQuantidadeDoIngrediente(iorgute, 3),
                 "Excecao nao encontrada"
         );
@@ -129,7 +132,7 @@ class ArmazemTest {
     }
 
     @Test
-    void testConsultarQuantidadeDoIngredienteEmEstoque_property(){
+    void testConsultarQuantidadeDoIngredienteEmEstoque_property() throws IngredienteNaoEncontrado {
         Ingrediente iogurte = new Base(TipoBase.IORGUTE);
         var quantidadeDoIngrediente = armazem.consultarQuantidadeDoIngrediente(iogurte);
 
@@ -140,7 +143,8 @@ class ArmazemTest {
     void testConsultarQuantidadeDoIngredienteEmEstoque_Exception(){
         Ingrediente sorvete = new Base(TipoBase.SORVETE);
 
-        Exception thrown = assertThrows(IllegalArgumentException.class,
+        Exception thrown = assertThrows(
+                IngredienteNaoEncontrado.class,
                 () -> armazem.consultarQuantidadeDoIngrediente(sorvete),
                 "Excecao nao encontrada");
 
