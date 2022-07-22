@@ -1,0 +1,44 @@
+package ingredientes;
+
+import java.util.Objects;
+
+public class Base implements Ingrediente,Comparable<Ingrediente>{
+
+    private final TipoBase tipoBase;
+
+    public Base(TipoBase tipoBase) {
+        this.tipoBase = tipoBase;
+    }
+
+    public TipoBase getTipoBase(){
+        return this.tipoBase;
+    }
+
+    @Override
+    public int compareTo(Ingrediente ingrediente) {
+        return this.obterTipo().toString().compareToIgnoreCase(ingrediente.obterTipo().toString());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Base)) return false;
+        Base base = (Base) o;
+        return tipoBase == base.tipoBase;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(tipoBase);
+    }
+
+    @Override
+    public String toString() {
+        return this.tipoBase.toString();
+    }
+
+    @Override
+    public Enum obterTipo() {
+        return this.tipoBase;
+    }
+}
