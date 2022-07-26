@@ -5,10 +5,13 @@ import exception.IngredienteNaoEncontrado;
 import exception.QuantidadeInvalida;
 import ingredientes.*;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ArmazemTest {
@@ -16,27 +19,30 @@ class ArmazemTest {
     Armazem armazem;
 
     @BeforeEach
-    void setup() throws IngredienteJaCadastrado {
+    void setup() throws IngredienteJaCadastrado, QuantidadeInvalida, IngredienteNaoEncontrado {
         armazem = new Armazem();
         Ingrediente iogurte = new Base(TipoBase.IORGUTE);
-        armazem.cadastrarIngrediente(iogurte, 2);
+        armazem.cadastrarIngrediente(iogurte);
+        armazem.adicionarquantidadedoIngrediente(iogurte, 2);
     }
 
     @Test
-    void cadastrarIngredienteEmEstoque_properly() throws IngredienteJaCadastrado {
+    @DisplayName("Cadastrar ingrediente")
+    void cadastrarIngredienteEmEstoque_properly() throws IngredienteJaCadastrado, IngredienteNaoEncontrado {
         Ingrediente mel = new Topping(TipoTopping.MEL);
-        armazem.cadastrarIngrediente(mel, 2);
+        armazem.cadastrarIngrediente(mel);
 
-        assertEquals(2, armazem.getItens().size());
+        assertEquals(0, armazem.consultarQuantidadeDoIngrediente(mel));
     }
 
     @Test
+    @DisplayName("Cadastrar ingrediente quando ingrediente já cadastrado")
     void cadastrarIngredienteEmEstoque_IngredienteJaCadastrado(){
         Ingrediente iogurte = new Base(TipoBase.IORGUTE);
 
         Exception thrown = assertThrows(
                 IngredienteJaCadastrado.class,
-                () -> armazem.cadastrarIngrediente(iogurte, 0),
+                () -> armazem.cadastrarIngrediente(iogurte),
                 "Excecao nao encontrada"
         );
 
@@ -44,15 +50,17 @@ class ArmazemTest {
     }
 
     @Test
+    @DisplayName("Descadastrar ingrediente")
     void testDescadastrarIngredienteEmEstoque_property() throws IngredienteNaoEncontrado {
         Ingrediente iogurte = new Base(TipoBase.IORGUTE);
 
         armazem.descadastrarIngrediente(iogurte);
-        //TODO: revisar o equals
+
         assertFalse(armazem.ingredienteExiste(iogurte));
     }
 
     @Test
+    @DisplayName("Descadastrar ingrediente quando ingrediente não existe")
     void testDescadastrarIngredienteEmEstoque_IngredienteNaoExiste(){
         Ingrediente sorvete = new Base(TipoBase.SORVETE);
 
@@ -66,6 +74,7 @@ class ArmazemTest {
     }
 
     @Test
+    @DisplayName("Adicionar quantidade do ingrediente")
     void testAdicionarQuantidadeDoIngredienteEmEstoque_property() throws QuantidadeInvalida, IngredienteNaoEncontrado {
         Ingrediente iogurte = new Base(TipoBase.IORGUTE);
 
@@ -75,7 +84,8 @@ class ArmazemTest {
     }
 
     @Test
-    void testAdicionarQuantidadeDoIngredienteEmEstoque_Exceptions(){
+    @DisplayName("Adicionar quantidade do ingrediente quando ingrediente não existe")
+    void testAdicionarQuantidadeDoIngredienteEmEstoque_IngredienteNaoEncontrado(){
         Ingrediente leite = new Base(TipoBase.LEITE);
 
         Exception thrown = assertThrows(
@@ -84,17 +94,25 @@ class ArmazemTest {
                 "Excecao nao encontrada"
         );
 
-        Exception thrown2 = assertThrows(
+        assertEquals("Ingrediente não encontrado.", thrown.getMessage());
+    }
+
+    @Test
+    @DisplayName("Adicionar quantidade do ingrediente como quantidade inválida")
+    void testAdicionarQuantidadeDoIngredienteEmEstoque_QuantidadeInvalida(){
+        Ingrediente leite = new Base(TipoBase.LEITE);
+
+        Exception thrown = assertThrows(
                 QuantidadeInvalida.class,
                 () -> armazem.adicionarquantidadedoIngrediente(leite, -9),
                 "Excecao nao encontrada"
         );
 
-        assertEquals("Ingrediente não encontrado.", thrown.getMessage());
-        assertEquals("Quantidade inválida.", thrown2.getMessage());
+        assertEquals("Quantidade inválida.", thrown.getMessage());
     }
 
     @Test
+    @DisplayName("Reduzir quantidade do ingrediente")
     void testReduzirQuantidadeDoIngredienteEmEstoque_property() throws QuantidadeInvalida, IngredienteNaoEncontrado {
         Ingrediente iogurte = new Base(TipoBase.IORGUTE);
 
@@ -104,9 +122,9 @@ class ArmazemTest {
     }
 
     @Test
-    void testReduzirQuantidadeDoIngredienteEmEstoque_Exceptions(){
+    @DisplayName("Reduzir quantidade do ingrediente quando ingrediente não existe")
+    void testReduzirQuantidadeDoIngredienteEmEstoque_IngredienteNaoEncontrado(){
         Ingrediente leite = new Base(TipoBase.LEITE);
-        Ingrediente iorgute = new Base(TipoBase.IORGUTE);
 
         Exception thrown = assertThrows(
                 IngredienteNaoEncontrado.class,
@@ -114,24 +132,39 @@ class ArmazemTest {
                 "Excecao nao encontrada"
         );
 
-        Exception thrown2 = assertThrows(
+        assertEquals("Ingrediente não encontrado.", thrown.getMessage());
+    }
+
+    @Test
+    @DisplayName("Reduzir quantidade do ingrediente quando quantidade inválida")
+    void testReduzirQuantidadeDoIngredienteEmEstoque_QuantidadeInvalida(){
+        Ingrediente iorgute = new Base(TipoBase.IORGUTE);
+
+        Exception thrown = assertThrows(
                 QuantidadeInvalida.class,
-                () -> armazem.reduzirQuantidadeDoIngrediente(leite, -9),
+                () -> armazem.reduzirQuantidadeDoIngrediente(iorgute, -9),
                 "Excecao nao encontrada"
         );
 
-        Exception thrown3 = assertThrows(
+        assertEquals("Quantidade inválida.", thrown.getMessage());
+    }
+
+    @Test
+    @DisplayName("Reduzir quantidade do ingrediente quando quantidade em estoque insuficiente")
+    void testReduzirQuantidadeDoIngredienteEmEstoque_QuantidadeInsuficiente(){
+        Ingrediente iorgute = new Base(TipoBase.IORGUTE);
+
+        Exception thrown = assertThrows(
                 QuantidadeInvalida.class,
                 () -> armazem.reduzirQuantidadeDoIngrediente(iorgute, 3),
                 "Excecao nao encontrada"
         );
 
-        assertEquals("Ingrediente não encontrado.", thrown.getMessage());
-        assertEquals("Quantidade inválida.", thrown2.getMessage());
-        assertEquals("Quantidade inválida.", thrown3.getMessage());
+        assertEquals("Quantidade inválida.", thrown.getMessage());
     }
 
     @Test
+    @DisplayName("Consultar quantidade do ingrediente")
     void testConsultarQuantidadeDoIngredienteEmEstoque_property() throws IngredienteNaoEncontrado {
         Ingrediente iogurte = new Base(TipoBase.IORGUTE);
         var quantidadeDoIngrediente = armazem.consultarQuantidadeDoIngrediente(iogurte);
@@ -140,6 +173,7 @@ class ArmazemTest {
     }
 
     @Test
+    @DisplayName("Consultar quantidade do ingrediente quando ingrediente não existe")
     void testConsultarQuantidadeDoIngredienteEmEstoque_Exception(){
         Ingrediente sorvete = new Base(TipoBase.SORVETE);
 

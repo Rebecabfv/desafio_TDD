@@ -20,10 +20,10 @@ public class Armazem {
         return this.estoque;
     }
 
-    public void cadastrarIngrediente(Ingrediente ingrediente, Integer quantidade) throws IngredienteJaCadastrado {
+    public void cadastrarIngrediente(Ingrediente ingrediente) throws IngredienteJaCadastrado {
         if (ingredienteExiste(ingrediente))
             throw new IngredienteJaCadastrado();
-        estoque.put(ingrediente, quantidade);
+        estoque.put(ingrediente, 0);
     }
 
     public void descadastrarIngrediente(Ingrediente ingrediente) throws IngredienteNaoEncontrado {
@@ -51,12 +51,6 @@ public class Armazem {
         return estoque.replace(ingrediente, consultarQuantidadeDoIngrediente(ingrediente), quantidadeAtualizada);
     }
 
-    private boolean validaQuantidade(Integer quantidade) throws QuantidadeInvalida {
-        if (quantidade > 0)
-            return true;
-        throw new QuantidadeInvalida();
-    }
-
     public void reduzirQuantidadeDoIngrediente(Ingrediente ingrediente, Integer quantidade) throws QuantidadeInvalida, IngredienteNaoEncontrado {
         validaQuantidade(quantidade);
         if (!ingredienteExiste(ingrediente))
@@ -67,6 +61,12 @@ public class Armazem {
             estoque.replace(ingrediente, consultarQuantidadeDoIngrediente(ingrediente), quantidade);
         else
             throw new QuantidadeInvalida();
+    }
+
+    private boolean validaQuantidade(Integer quantidade) throws QuantidadeInvalida {
+        if (quantidade > 0)
+            return true;
+        throw new QuantidadeInvalida();
     }
 
     public boolean ingredienteExiste(Ingrediente ingrediente) {
