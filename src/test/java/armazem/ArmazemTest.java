@@ -28,7 +28,7 @@ class ArmazemTest {
 
     @Test
     @DisplayName("Cadastrar ingrediente")
-    void cadastrarIngredienteEmEstoque_properly() throws IngredienteJaCadastrado, IngredienteNaoEncontrado {
+    void cadastrarIngredienteEmEstoque() throws IngredienteJaCadastrado, IngredienteNaoEncontrado {
         Ingrediente mel = new Topping(TipoTopping.MEL);
         armazem.cadastrarIngrediente(mel);
 
@@ -37,7 +37,7 @@ class ArmazemTest {
 
     @Test
     @DisplayName("Cadastrar ingrediente quando ingrediente já cadastrado")
-    void cadastrarIngredienteEmEstoque_IngredienteJaCadastrado(){
+    void cadastrarIngredienteEmEstoqueQuandoIngredienteJaEstiverCadastrado(){
         Ingrediente iogurte = new Base(TipoBase.IORGUTE);
 
         Exception thrown = assertThrows(
@@ -51,7 +51,7 @@ class ArmazemTest {
 
     @Test
     @DisplayName("Descadastrar ingrediente")
-    void testDescadastrarIngredienteEmEstoque_property() throws IngredienteNaoEncontrado {
+    void descadastrarIngredienteEmEstoque() throws IngredienteNaoEncontrado {
         Ingrediente iogurte = new Base(TipoBase.IORGUTE);
 
         armazem.descadastrarIngrediente(iogurte);
@@ -61,7 +61,7 @@ class ArmazemTest {
 
     @Test
     @DisplayName("Descadastrar ingrediente quando ingrediente não existe")
-    void testDescadastrarIngredienteEmEstoque_IngredienteNaoExiste(){
+    void descadastrarIngredienteEmEstoqueQuandoIngredienteNaoExisteNoEstoque(){
         Ingrediente sorvete = new Base(TipoBase.SORVETE);
 
         Exception thrown = assertThrows(
@@ -75,7 +75,7 @@ class ArmazemTest {
 
     @Test
     @DisplayName("Adicionar quantidade do ingrediente")
-    void testAdicionarQuantidadeDoIngredienteEmEstoque_property() throws QuantidadeInvalida, IngredienteNaoEncontrado {
+    void AdicionarQuantidadeDoIngredienteEmEstoque() throws QuantidadeInvalida, IngredienteNaoEncontrado {
         Ingrediente iogurte = new Base(TipoBase.IORGUTE);
 
         armazem.adicionarquantidadedoIngrediente(iogurte, 2);
@@ -85,7 +85,7 @@ class ArmazemTest {
 
     @Test
     @DisplayName("Adicionar quantidade do ingrediente quando ingrediente não existe")
-    void testAdicionarQuantidadeDoIngredienteEmEstoque_IngredienteNaoEncontrado(){
+    void adicionarQuantidadeDoIngredienteEmEstoqueQuandoIngredienteNaoExisteNoEstoque(){
         Ingrediente leite = new Base(TipoBase.LEITE);
 
         Exception thrown = assertThrows(
@@ -99,7 +99,7 @@ class ArmazemTest {
 
     @Test
     @DisplayName("Adicionar quantidade do ingrediente como quantidade inválida")
-    void testAdicionarQuantidadeDoIngredienteEmEstoque_QuantidadeInvalida(){
+    void adicionarQuantidadeDoIngredienteEmEstoqueQuandoQuantidadeMenorQueZero(){
         Ingrediente leite = new Base(TipoBase.LEITE);
 
         Exception thrown = assertThrows(
@@ -113,7 +113,7 @@ class ArmazemTest {
 
     @Test
     @DisplayName("Reduzir quantidade do ingrediente")
-    void testReduzirQuantidadeDoIngredienteEmEstoque_property() throws QuantidadeInvalida, IngredienteNaoEncontrado {
+    void reduzirQuantidadeDoIngredienteEmEstoque() throws QuantidadeInvalida, IngredienteNaoEncontrado {
         Ingrediente iogurte = new Base(TipoBase.IORGUTE);
 
         armazem.reduzirQuantidadeDoIngrediente(iogurte, 1);
@@ -122,8 +122,8 @@ class ArmazemTest {
     }
 
     @Test
-    @DisplayName("Reduzir quantidade do ingrediente quando ingrediente não existe")
-    void testReduzirQuantidadeDoIngredienteEmEstoque_IngredienteNaoEncontrado(){
+    @DisplayName("Reduzir quantidade do ingrediente quando ingrediente não existe no estoque")
+    void reduzirQuantidadeDoIngredienteEmEstoqueQuandoIngredienteNaoExisteNoEstoque(){
         Ingrediente leite = new Base(TipoBase.LEITE);
 
         Exception thrown = assertThrows(
@@ -137,7 +137,7 @@ class ArmazemTest {
 
     @Test
     @DisplayName("Reduzir quantidade do ingrediente quando quantidade inválida")
-    void testReduzirQuantidadeDoIngredienteEmEstoque_QuantidadeInvalida(){
+    void reduzirQuantidadeDoIngredienteEmEstoqueQuandoQuantidadeMenorQueZero(){
         Ingrediente iorgute = new Base(TipoBase.IORGUTE);
 
         Exception thrown = assertThrows(
